@@ -67,10 +67,10 @@ the model would have more than one or two objects to find.
 The output is saved as `output_result.png`. It is the same street photo with a
 green box and a label drawn over every object the model was confident about.
 
-On my run the model detected 10 objects:
+On my run the model detected 9 objects:
 
 ```
-Total objects detected: 10
+Total objects detected: 9
   car: 0.89
   car: 0.86
   car: 0.80
@@ -78,15 +78,15 @@ Total objects detected: 10
   car: 0.78
   car: 0.66
   car: 0.58
-  surfboard: 0.50
   person: 0.47
   motorcycle: 0.42
 ```
 
 It found all the clear cars correctly and also picked up a person and a
-motorcycle further down the road. The one mistake was a white roadside statue
-that it labelled as a surfboard. That kind of slip is normal for a small,
-fast model, and I left it in the result instead of hiding it.
+motorcycle further down the road. Before filtering, the model also boxed a white
+roadside statue and labelled it a surfboard, since it was trained on everyday
+objects and has no class for statues. I added a small allowlist of street
+objects so only traffic gets drawn, which removes that misread.
 
 ---
 
@@ -101,6 +101,8 @@ fast model, and I left it in the result instead of hiding it.
 - Lowered the confidence threshold from 0.50 to 0.40 so more objects show up.
 - Changed the bounding box color from red to green.
 - Added a printout of the total object count and every detected object name.
+- Added an allowlist of street objects so only traffic is drawn, which filters
+  out odd misreads like the roadside statue.
 - Rewrote the Colab upload and display code so the script reads the image from a
   file and saves the output directly, which lets it run on a normal computer.
 

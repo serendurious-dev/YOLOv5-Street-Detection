@@ -4,3 +4,6 @@ yolov5s.pt
 # python cache
 __pycache__/
 *.pyc
+
+# editor settings
+.vscode/
