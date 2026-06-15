@@ -16,8 +16,8 @@ Built by **Prodipta Acharjee**.
 
 You point the script at an image. It then:
 
-- Loads the `yolov5s` model with its pretrained COCO weights.
-- Runs detection on the image.
+- Loads the `yolov5m` model with its pretrained COCO weights.
+- Runs detection at 1280 px so even distant cars are picked up.
 - Draws a green box and a label around each detected object.
 - Prints the total number of objects and each object name with its confidence.
 - Saves the result as `output_result.png`.
@@ -48,7 +48,7 @@ Then run the script from inside the project folder:
 python main.py
 ```
 
-The first run downloads the YOLOv5 weights automatically (about 14 MB), so it
+The first run downloads the YOLOv5 weights automatically (about 40 MB), so it
 needs an internet connection that one time. After that it works offline.
 
 ---
@@ -67,26 +67,24 @@ the model would have more than one or two objects to find.
 The output is saved as `output_result.png`. It is the same street photo with a
 green box and a label drawn over every object the model was confident about.
 
-On my run the model detected 9 objects:
+On my run the model detected 32 objects across the whole scene:
 
 ```
-Total objects detected: 9
-  car: 0.89
-  car: 0.86
-  car: 0.80
-  car: 0.79
-  car: 0.78
-  car: 0.66
-  car: 0.58
-  person: 0.47
-  motorcycle: 0.42
+Total objects detected: 32
+  car: 14
+  motorcycle: 8
+  person: 9
+  truck: 1
 ```
 
-It found all the clear cars correctly and also picked up a person and a
-motorcycle further down the road. Before filtering, the model also boxed a white
-roadside statue and labelled it a surfboard, since it was trained on everyday
-objects and has no class for statues. I added a small allowlist of street
-objects so only traffic gets drawn, which removes that misread.
+The full list with a confidence score for each object prints to the console when
+you run the script. Switching to the medium model and detecting at 1280 px made a
+big difference. The small model at the default size only found the seven nearest
+cars, while this setup also picks up the cars, motorbikes, and people further
+down the road. Before filtering, the model also boxed a white roadside statue and
+labelled it a surfboard, since it was trained on everyday objects and has no class
+for statues. I added a small allowlist of street objects so only traffic gets
+drawn, which removes that misread.
 
 ---
 
@@ -98,7 +96,9 @@ objects so only traffic gets drawn, which removes that misread.
 
 ## What I changed from the class skeleton
 
-- Lowered the confidence threshold from 0.50 to 0.40 so more objects show up.
+- Switched the model from `yolov5s` to `yolov5m`, which finds more distant cars.
+- Detect at 1280 px instead of the default size so small far-away cars register.
+- Lowered the confidence threshold from 0.50 to 0.30 so more objects show up.
 - Changed the bounding box color from red to green.
 - Added a printout of the total object count and every detected object name.
 - Added an allowlist of street objects so only traffic is drawn, which filters

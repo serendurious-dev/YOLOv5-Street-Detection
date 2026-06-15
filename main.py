@@ -14,7 +14,9 @@ import cv2
 # settings I changed from the class demo
 INPUT_FILE = "input_image.jpg"
 OUTPUT_FILE = "output_result.png"
-CONF_THRESHOLD = 0.40          # demo used 0.50, I lowered it to catch more objects
+MODEL_NAME = "yolov5m"         # demo used yolov5s, the medium model finds more distant cars
+CONF_THRESHOLD = 0.30          # demo used 0.50, I lowered it to catch more objects
+IMAGE_SIZE = 1280              # detect at full size so small far-away cars still register
 BOX_COLOR = (0, 200, 0)        # demo drew red boxes, I switched to green
 BOX_THICKNESS = 2
 
@@ -24,16 +26,17 @@ STREET_CLASSES = {"person", "bicycle", "car", "motorcycle", "bus", "truck", "tra
 
 
 def load_model():
-    # pull yolov5s (small, fast) with its pretrained COCO weights
-    model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True, trust_repo=True)
+    # pull the model with its pretrained COCO weights
+    model = torch.hub.load("ultralytics/yolov5", MODEL_NAME, pretrained=True, trust_repo=True)
     model.conf = CONF_THRESHOLD
-    print("Model loaded. Confidence threshold set to", CONF_THRESHOLD)
+    print("Loaded", MODEL_NAME, "with confidence threshold", CONF_THRESHOLD)
     return model
 
 
 def detect(model, image):
+    # run at IMAGE_SIZE so distant cars are big enough to detect
+    results = model(image, size=IMAGE_SIZE)
     # YOLO returns one row per object as x1, y1, x2, y2, confidence, class id
-    results = model(image)
     detections = results.xyxy[0].cpu().numpy()
     return detections, model.names
 
